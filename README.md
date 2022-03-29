@@ -1,6 +1,5 @@
 # Project-2-LFA
-#-NFA to DFA conversion (still in progress)
-Changes from the first project:
+__Changes from the first project:__
 * instead of a list, the graph/FA is now a dictionary of the form:
 * {state: [bool, (nextNode1, letter), (nextNode2, letter), ...]}
 * cleaner constructor for the automaton 
