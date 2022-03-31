@@ -1,6 +1,6 @@
 cin = open("input.txt")
 
-class automaton:
+class Automaton:
     def __init__(self, numberOfNodes, numberOfEdges):
         self.graph = {}
         self.alphabet = set()
@@ -46,6 +46,34 @@ class automaton:
 #               graph with the new one
 
 
+    def conversionToDFA(self):
+        newInitialState = self.lambdaClosure(self.initialState)
+        newStates = []
+        newStates += self.subsetConstruction([newInitialState], 0)
+        print(newStates)
+
+# ! must add some sort of while loop to do this until there are no new superStates, also must put them in the new graph
+# ! conversion *SEEMS* to work for creating the DFA states, still must update them in the new graph
+# [023456, 23456, 0123456]
+# lastLength = 1
+# newStates[lastLength:] = newStates[1:] = [23456, 0123456] 
+
+    def subsetConstruction(self, newStates, lastLength):
+        if lastLength == len(newStates):
+            return newStates
+        newLastLength = len(newStates)
+        for superState in newStates[lastLength:]:
+            for letter in self.alphabet:
+                newSuperState = []
+                for q in superState:
+                    for edge in range(1, len(self.graph[q])):
+                        if self.graph[q][edge][1] == letter:
+                            newSuperState.append(self.graph[q][edge][0])
+                newSuperState = ''.join(sorted(list(set(self.lambdaClosure(newSuperState)))))
+                if newSuperState not in newStates and len(newSuperState):
+                    newStates.append(newSuperState)
+        return self.subsetConstruction(newStates, newLastLength)
+        
 
     def checkNextLetter(self, q, word, path):
         # TODO update this and checkWord so it works for the new format (q's must be strings, self.graph is now a dict)
@@ -76,10 +104,9 @@ class automaton:
 init = cin.readline().split()
 numberOfNodes = int(init[0])
 numberOfEdges = int(init[1])
-FA = automaton(numberOfNodes, numberOfEdges)
-print(FA.graph)
+FA = Automaton(numberOfNodes, numberOfEdges)
+#print(FA.graph)
 #print("Initial State:", FA.initialState)
-#print("Final States:", *FA.finalStates)
+#print("Final States:", *FA.finalStates) 
 #print("Alphabet:", *FA.alphabet)
-
-
+FA.conversionToDFA()
