@@ -4,6 +4,6 @@ __Changes from the first project:__
 * {state: [bool, (nextNode1, letter), (nextNode2, letter), ...]}
 * cleaner constructor for the automaton 
 * lambda closure method for a state 
-* conversion to DFA (not done)
+* conversion to DFA (kind of done)
 * updated word accepting method (not done)
  
