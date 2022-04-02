@@ -46,10 +46,18 @@ class Automaton:
                 if q in self.finalStates:
                     newFinalStates.append(superState)
                     newGraph[superState][0] = True
+        for superState in newGraph:
+            updatedList = list(set(newGraph[superState][1:]))
+            updatedList.insert(0, newGraph[superState][0])
+            newGraph[superState] = updatedList
+        self.numberOfNodes = len(newGraph)
+        newNumberOfEdges = 0
+        for superState in newGraph:
+            newNumberOfEdges += len(newGraph[superState]) - 1
+        self.numberOfEdges = newNumberOfEdges
         self.graph = newGraph
         self.initialState = newInitialState
         self.finalStates = list(set(newFinalStates))
-        # TODO edges can appear more than once
 
     def subsetConstruction(self, newStates, newGraph, lastLength):
         if lastLength == len(newStates):
@@ -65,23 +73,22 @@ class Automaton:
                 newSuperState = "".join(
                     sorted(list(set(self.lambdaClosure(newSuperState))))
                 )
-                if newSuperState not in newStates and len(newSuperState):
-                    newStates.append(newSuperState)
-                    newGraph[newSuperState] = [False]
-                elif len(newSuperState):
+                if len(newSuperState):
+                    if newSuperState not in newStates:
+                        newStates.append(newSuperState)
+                        newGraph[newSuperState] = [False]
                     newGraph[superState].append((newSuperState, letter))
         return self.subsetConstruction(newStates, newGraph, newLastLength)
 
     def checkNextLetter(self, q, word, path):
-        # TODO update this and checkWord so it works for the new format (q's must be strings, self.graph is now a dict)
         if not word:
-            if self.graph[q][1]:
+            if self.graph[q][0]:
                 path.append(q)
                 return path
             return False
-        if len(self.graph[q]) == 2:
+        if len(self.graph[q]) == 1:
             return False
-        for edge in range(2, len(self.graph[q])):
+        for edge in range(1, len(self.graph[q])):
             if word[0] == self.graph[q][edge][1]:
                 newPath = path
                 newPath.append(q)
@@ -90,8 +97,8 @@ class Automaton:
         return False
 
     def checkWord(self, word):
-        currentState = self.initialState
-        result = self.checkNextLetter(initialState, word, [])
+        result = self.checkNextLetter(self.initialState, word, [self.initialState])
+        print(word, end=": ")
         if result:
             print(True, *result[1:])
         else:
@@ -102,10 +109,10 @@ init = cin.readline().split()
 numberOfNodes = int(init[0])
 numberOfEdges = int(init[1])
 FA = Automaton(numberOfNodes, numberOfEdges)
-print(FA.graph)
-# print("Initial State:", FA.initialState)
-# print("Final States:", *FA.finalStates)
-# print("Alphabet:", *FA.alphabet)
+print("Graph before conversion:", FA.graph)
 FA.conversionToDFA()
-print(FA.graph)
-print(FA.finalStates)
+print("Graph converted to DFA:", FA.graph)
+numberOfWords = int(cin.readline())
+for i in range(numberOfWords):
+    word = cin.readline()[:-1]
+    FA.checkWord(word)
