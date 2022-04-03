@@ -93,7 +93,6 @@ class Automaton:
                 newPath = path
                 newPath.append(q)
                 return self.checkNextLetter(self.graph[q][edge][0], word[1:], newPath)
-                break
         return False
 
     def checkWord(self, word):
@@ -109,8 +108,14 @@ init = cin.readline().split()
 numberOfNodes = int(init[0])
 numberOfEdges = int(init[1])
 FA = Automaton(numberOfNodes, numberOfEdges)
+print("Alphabet:", FA.alphabet)
+print("Initial State:", FA.initialState)
+print("Final States:", *FA.finalStates)
 print("Graph before conversion:", FA.graph)
 FA.conversionToDFA()
+print("Updated Alphabet:", FA.alphabet)
+print("Updated Initial State:", FA.initialState)
+print("Updated Final States:", *FA.finalStates)
 print("Graph converted to DFA:", FA.graph)
 numberOfWords = int(cin.readline())
 for i in range(numberOfWords):
