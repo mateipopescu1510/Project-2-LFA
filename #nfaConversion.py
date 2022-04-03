@@ -93,7 +93,6 @@ class Automaton:
                 newPath = path
                 newPath.append(q)
                 return self.checkNextLetter(self.graph[q][edge][0], word[1:], newPath)
-                break
         return False
 
     def checkWord(self, word):
